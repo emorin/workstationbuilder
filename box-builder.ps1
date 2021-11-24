@@ -11,9 +11,9 @@ $cred=Get-Credential domain\username
 Install-BoxstarterPackage -PackageName https://gist.githubusercontent.com/flcdrg/87802af4c92527eb8a30/raw/boxstarter-bare.ps1 -Credential $cred
 ### End 
 
-Install-BoxstarterPackage -PackageName https://gist.github.com/emorin/017cb0b496c5450a191ed721a5bb987d/raw/box-builder.ps1
+Install-BoxstarterPackage -PackageName https://raw.githubusercontent.com/emorin/workstationbuilder/main/box-builder.ps1
 
-Install-BoxstarterPackage -PackageName https://gist.github.com/emorin/017cb0b496c5450a191ed721a5bb987d/raw/box-builder.ps1 -DisableReboots
+Install-BoxstarterPackage -PackageName https://raw.githubusercontent.com/emorin/workstationbuilder/main/box-builder.ps1 -DisableReboots
 #>
 
 ######################################
