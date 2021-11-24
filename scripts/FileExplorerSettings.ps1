@@ -5,7 +5,7 @@
 Write-Host ""
 Write-Output "Showing hidden files, protected OS files, and file extensions..." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
-Set-WindowsExplorerOptions -EnableShowHiddenFilesFoldersDrives -EnableShowProtectedOSFiles -EnableShowFileExtensions -EnableShowFullPathInTitleBar -EnableExpandToOpenFolder -EnableOpenFileExplorerToQuickAccess
+Set-WindowsExplorerOptions -EnableShowHiddenFilesFoldersDrives -EnableShowProtectedOSFiles -EnableShowFileExtensions -EnableShowFullPathInTitleBar -EnableExpandToOpenFolder -DisableOpenFileExplorerToQuickAccess
 # -----------------------------------------------------------------------------
 # #--- File Explorer Settings ---
 # # will expand explorer to the actual folder you're in
