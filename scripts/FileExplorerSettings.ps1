@@ -14,12 +14,12 @@ Set-WindowsExplorerOptions -EnableShowHiddenFilesFoldersDrives -EnableShowProtec
 # Write-Host "------------------------------------" -ForegroundColor Green
 # Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name NavPaneExpandToCurrentFolder -Value 1
 # # -----------------------------------------------------------------------------
-# # adds things back in your left pane like recycle bin
-# Write-Host ""
-# Write-Output "Adding things in your left pane like recycle bin..." -ForegroundColor Green
-# Write-Host "------------------------------------" -ForegroundColor Green
-# Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name NavPaneShowAllFolders -Value 1
-# # -----------------------------------------------------------------------------
+# adds things back in your left pane like recycle bin
+Write-Host ""
+Write-Output "Adding things in your left pane like recycle bin..." -ForegroundColor Green
+Write-Host "------------------------------------" -ForegroundColor Green
+Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name NavPaneShowAllFolders -Value 1
+# -----------------------------------------------------------------------------
 # # opens PC to This PC, not quick access
 # Write-Host ""
 # Write-Output "Setting the open PC to This PC, not quick access..." -ForegroundColor Green
@@ -30,7 +30,7 @@ Set-WindowsExplorerOptions -EnableShowHiddenFilesFoldersDrives -EnableShowProtec
 Write-Host ""
 Write-Output "Setting explorer item checkboxes..." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
-Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name UseCheckBoxes -Value 1
+Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name AutoCheckSelect -Value 1
 # -----------------------------------------------------------------------------
 # taskbar where window is open for multi-monitor
 Write-Host ""
