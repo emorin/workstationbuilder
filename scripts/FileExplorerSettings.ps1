@@ -5,7 +5,7 @@
 Write-Host ""
 Write-Output "Showing hidden files, protected OS files, and file extensions..." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
-Set-WindowsExplorerOptions -EnableShowHiddenFilesFoldersDrives -EnableShowProtectedOSFiles -EnableShowFileExtensions -EnableShowFullPathInTitleBar -EnableExpandToOpenFolder -EnableOpenFileExplorerToQuickAccess -EnableItemCheckBox
+Set-WindowsExplorerOptions -EnableShowHiddenFilesFoldersDrives -EnableShowProtectedOSFiles -EnableShowFileExtensions -EnableShowFullPathInTitleBar -EnableExpandToOpenFolder -EnableOpenFileExplorerToQuickAccess
 # -----------------------------------------------------------------------------
 # #--- File Explorer Settings ---
 # # will expand explorer to the actual folder you're in
@@ -26,6 +26,12 @@ Set-WindowsExplorerOptions -EnableShowHiddenFilesFoldersDrives -EnableShowProtec
 # Write-Host "------------------------------------" -ForegroundColor Green
 # Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name LaunchTo -Value 1
 # # -----------------------------------------------------------------------------
+# enable item checkboxes
+Write-Host ""
+Write-Output "Setting explorer item checkboxes..." -ForegroundColor Green
+Write-Host "------------------------------------" -ForegroundColor Green
+Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name UseCheckBoxes -Value 1
+# -----------------------------------------------------------------------------
 # taskbar where window is open for multi-monitor
 Write-Host ""
 Write-Output "Setting the taskbar where window is open for multi-monitor..." -ForegroundColor Green
