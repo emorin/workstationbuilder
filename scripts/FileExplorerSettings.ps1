@@ -12,31 +12,31 @@ Set-WindowsExplorerOptions -EnableShowHiddenFilesFoldersDrives -EnableShowProtec
 # Write-Host ""
 # Write-Output "Setting the explorer to the actual folder you're in..." -ForegroundColor Green
 # Write-Host "------------------------------------" -ForegroundColor Green
-# Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name NavPaneExpandToCurrentFolder -Value 1
+# Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name NavPaneExpandToCurrentFolder -Value 1
 # # -----------------------------------------------------------------------------
 # adds things back in your left pane like recycle bin
 Write-Host ""
 Write-Output "Adding things in your left pane like recycle bin..." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
-Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name NavPaneShowAllFolders -Value 1
+Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name NavPaneShowAllFolders -Value 1
 # -----------------------------------------------------------------------------
 # # opens PC to This PC, not quick access
 # Write-Host ""
 # Write-Output "Setting the open PC to This PC, not quick access..." -ForegroundColor Green
 # Write-Host "------------------------------------" -ForegroundColor Green
-# Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name LaunchTo -Value 1
+# Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name LaunchTo -Value 1
 # # -----------------------------------------------------------------------------
 # enable item checkboxes
 Write-Host ""
 Write-Output "Setting explorer item checkboxes..." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
-Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name AutoCheckSelect -Type DWord -Value 1 -Force
-# New-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name AutoCheckSelect -PropertyType DWord -Value 1 -Force
+# Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name AutoCheckSelect -Type DWord -Value 1 -Force
+New-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name AutoCheckSelect -PropertyType DWord -Value 1 -Force
 # -----------------------------------------------------------------------------
 # taskbar where window is open for multi-monitor
 Write-Host ""
 Write-Output "Setting the taskbar where window is open for multi-monitor..." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
-Set-ItemProperty -Path HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name MMTaskbarMode -Value 2
+Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name MMTaskbarMode -Value 2
 # -----------------------------------------------------------------------------
 
