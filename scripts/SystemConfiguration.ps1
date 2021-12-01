@@ -13,6 +13,12 @@ Disable-GameBarTips
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name AppCaptureEnabled -Type DWord -Value 0
 Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name GameDVR_Enabled -Type DWord -Value 0
 # -----------------------------------------------------------------------------
+# Disable Bing Search
+Write-Host ""
+Write-Output "Disable Bing Search..." -ForegroundColor Green
+Write-Host "------------------------------------" -ForegroundColor Green
+Disable-BingSearch
+# -----------------------------------------------------------------------------
 # Privacy: Let apps use my advertising ID: Disable
 Write-Host ""
 Write-Output "Disabling Advertising ID..." -ForegroundColor Green
@@ -26,6 +32,12 @@ if (-not (Test-Path -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Advert
     New-Item -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo -Force
 }
 New-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo -Name Enabled -PropertyType DWord -Value 1 -Force
+# -----------------------------------------------------------------------------
+Write-Host ""
+Write-Host "Enable Windows and App to Dark Mode" -ForegroundColor Green
+Write-Host "------------------------------------" -ForegroundColor Green
+New-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize -Name AppsUseLightTheme -PropertyType DWord -Value 0 -Force
+New-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize -Name SystemUsesLightTheme -PropertyType DWord -Value 0 -Force
 # -----------------------------------------------------------------------------
 Write-Host ""
 Write-Host "Restarting Explorer" -ForegroundColor Yellow

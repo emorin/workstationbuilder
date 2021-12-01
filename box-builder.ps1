@@ -16,6 +16,11 @@ Install-BoxstarterPackage -PackageName https://raw.githubusercontent.com/emorin/
 Install-BoxstarterPackage -PackageName https://raw.githubusercontent.com/emorin/workstationbuilder/main/box-builder.ps1 -DisableReboots
 #>
 
+# Boxstarter options
+$Boxstarter.RebootOk=$true # Allow reboots?
+$Boxstarter.NoPassword=$false # Is this a machine with no login password?
+$Boxstarter.AutoLogin=$true # Save my password securely and auto-login after a reboot
+
 ######################################
 #### make sure we're not bothered ####
 ######################################
@@ -47,10 +52,48 @@ function executeScript {
 	iex ((new-object net.webclient).DownloadString("$helperUri/$script"))
 }
 
+function chocoAppInstall {
+    Param(  
+        [string]$chocolateyAppList
+    )
+
+    if ([string]::IsNullOrWhiteSpace($chocolateyAppList) -eq $false){   
+      
+        $appsToInstall = $chocolateyAppList -split "," | ForEach-Object { "$($_.Trim())" }
+
+        foreach ($app in $appsToInstall)
+        {
+            Write-Host "Installing $app"
+            & choco upgrade $app -y --cacheLocation="$ChocoCachePath" | Write-Output
+        }
+    }
+}
+
+function chocoWindowsFeature {
+    Param(  
+        [string]$dismAppList    
+    )
+
+    if ([string]::IsNullOrWhiteSpace($dismAppList) -eq $false){
+        Write-Host "DISM Features Specified"    
+
+        $appsToInstall = $dismAppList -split "," | ForEach-Object { "$($_.Trim())" }
+
+        foreach ($app in $appsToInstall)
+        {
+            Write-Host "Installing $app"
+            & choco install $app /y /source windowsfeatures | Write-Output
+        }
+    }
+}
+
+$ConfirmPreference = "None" #ensure installing powershell modules don't prompt on needed dependencies
+
 #--- Setting up Windows ---
 executeScript "SystemConfiguration.ps1";
 executeScript "FileExplorerSettings.ps1";
 executeScript "RemoveDefaultApps.ps1";
+executeScript "CommonAdminTools.ps1";
 # executeScript "CommonDevTools.ps1";
 
 

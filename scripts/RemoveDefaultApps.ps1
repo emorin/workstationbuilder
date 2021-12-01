@@ -45,8 +45,6 @@ $applicationList = @(
 	"Microsoft.ZuneVideo"
 	"Microsoft.NetworkSpeedTest"
 	"Microsoft.FreshPaint"
-	"Microsoft.ZuneMusic"
-	"Microsoft.ZuneVideo"
 	"*Autodesk*"
 	"*BubbleWitch*"
     "king.com*"
