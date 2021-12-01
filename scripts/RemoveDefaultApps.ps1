@@ -11,7 +11,7 @@ Write-Host "------------------------------------" -ForegroundColor Yellow
 
 function removeApp {
 	Param ([string]$appName)
-	Write-Output "Trying to remove $appName"
+	Write-Host "Trying to remove $appName" -ForegroundColor Yellow
 	Get-AppxPackage $appName -AllUsers | Remove-AppxPackage
 	Get-AppXProvisionedPackage -Online | Where DisplayName -like $appName | Remove-AppxProvisionedPackage -Online
 }

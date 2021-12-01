@@ -1,13 +1,13 @@
 #Set the time zone and resync the time
 Write-Host ""
-Write-Output "Setting the Time Zone to CST and syncing time..." -ForegroundColor Green
+Write-Host "Setting the Time Zone to CST and syncing time..." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
 Set-TimeZone -Name "Mountain Standard Time"
 w32tm /resync /rediscover 
 # -----------------------------------------------------------------------------
 # Disable Xbox Gamebar
 Write-Host ""
-Write-Output "Disable XBox Gamer Bar..." -ForegroundColor Green
+Write-Host "Disable XBox Gamer Bar..." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
 Disable-GameBarTips
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\GameDVR" -Name AppCaptureEnabled -Type DWord -Value 0
@@ -15,13 +15,13 @@ Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name GameDVR_Enabled -Typ
 # -----------------------------------------------------------------------------
 # Disable Bing Search
 Write-Host ""
-Write-Output "Disable Bing Search..." -ForegroundColor Green
+Write-Host "Disable Bing Search..." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
 Disable-BingSearch
 # -----------------------------------------------------------------------------
 # Privacy: Let apps use my advertising ID: Disable
 Write-Host ""
-Write-Output "Disabling Advertising ID..." -ForegroundColor Green
+Write-Host "Disabling Advertising ID..." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
 # If (-Not (Test-Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo")) {
 #     New-Item -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\AdvertisingInfo | Out-Null

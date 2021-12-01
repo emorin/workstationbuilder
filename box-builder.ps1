@@ -68,8 +68,7 @@ function chocoAppInstall {
         foreach ($app in $appsToInstall)
         {
             Write-Host ""
-            $outPutText = "Installing $app"
-            Write-Output $outPutText -ForegroundColor Green
+            Write-Host "Installing $app" -ForegroundColor Green
             Write-Host "------------------------------------" -ForegroundColor Green
             & choco upgrade $app -y --cacheLocation="$ChocoCachePath" | Write-Output
         }

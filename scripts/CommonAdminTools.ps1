@@ -42,7 +42,7 @@ chocoAppInstall "lockhunter,chocolateygui,nodejs.install";
 
 # Tools with installers placed in the Utilities folder.
 Write-Host ""
-Write-Output "Installing Special Apps into C:\Utilities folder." -ForegroundColor Green
+Write-Host "Installing Special Apps into C:\Utilities folder." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
 choco upgrade openssl.light --cacheLocation="$ChocoCachePath" --params "/InstallDir:C:\Utilities\openssl" #working
 
