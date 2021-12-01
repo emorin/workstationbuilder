@@ -38,6 +38,9 @@ New-Item -Path $ChocoCachePath -ItemType Directory -Force
 ######################################
 #### helper functions ####
 ######################################
+function Check-Command($cmdname) {
+    return [bool](Get-Command -Name $cmdname -ErrorAction SilentlyContinue)
+}
 function chocoAppInstall {
     Param(  
         [string]$chocolateyAppList
