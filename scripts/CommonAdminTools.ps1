@@ -1,76 +1,29 @@
-# ### HACK Workaround choco / boxstarter path too long error
-# ## https://github.com/chocolatey/boxstarter/issues/241
-# $ChocoCachePath = "$env:USERPROFILE\AppData\Local\Temp\chocolatey"
-# New-Item -Path $ChocoCachePath -ItemType Directory -Force
+######################################
+#### Common Admin Tools ####
+######################################
+
+Write-Host ""
+Write-Host "Installing Common Admin Applications..." -ForegroundColor Gray
+Write-Host "------------------------------------" -ForegroundColor Gray
 
 #--- Create a folder for Utilities installs ---
 Write-Host ""
-Write-Output "Creating Utilities folder on C:\" -ForegroundColor Green
+Write-Output "Creating bin folder on C:\" -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
-New-Item -Path C:\Utilities -ItemType "directory"
+New-Item -Path C:\bin -ItemType "directory"
 
+chocoAppInstall "lockhunter,chocolateygui,7zip.install,notepadplusplus.install,chocolatey-core.extension,powertoys,putty.install,wiztree,klogg,autohotkey.install,sizer,teracopy";
+
+choco install powershell-core --cacheLocation="$ChocoCachePath" --install-arguments='"ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL=1 ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1 REGISTER_MANIFEST=1 ENABLE_PSREMOTING=1"' --packageparameters '"/CleanUpPath"'
+
+# Tools with installers placed in the bin folder.
 Write-Host ""
-Write-Host "Installing Common Admin Applications..." -ForegroundColor Green
+Write-Host "Installing Special Apps into C:\bin folder." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
+choco upgrade openssl.light --cacheLocation="$ChocoCachePath" --params "/InstallDir:C:\bin\openssl" #working
 
-# if (Check-Command -cmdname 'git') {
-#     Write-Host "Git is already installed, checking new version..."
-#     choco upgrade git -y
-# }
-# else {
-    Write-Host ""
-    Write-Host "Installing Git for Windows..." -ForegroundColor Green
-	choco upgrade git.install --cacheLocation="$ChocoCachePath" --params "/GitAndUnixToolsOnPath /NoGitLfs /SChannel /NoAutoCrlf /WindowsTerminal"
-    RefreshEnv
-# }
+# Write-Host ""
+# Write-Host "Adding Sysinternal to the path" -ForegroundColor Green
+# Write-Host "------------------------------------" -ForegroundColor Green
+# setx /M PATH "$($env:path);C:\tools\sysinternals;C:\tools\terraform;C:\tools\wget"
 
-chocoAppInstall "lockhunter,chocolateygui,nodejs.install";
-# choco upgrade lockhunter --cacheLocation="$ChocoCachePath"
-# choco upgrade chocolateygui --cacheLocation="$ChocoCachePath"
-
-# node is installing to custom path correctly
-# if (Check-Command -cmdname 'node') {
-#     Write-Host "Node.js is already installed, checking new version..."
-#     choco upgrade nodejs -y
-# }
-# else {
-    # Write-Host ""
-    # Write-Host "Installing Node.js..." -ForegroundColor Green
-    # #choco upgrade nodejs -y --params "/InstallDir:C:\Utilities\nodejs"
-    # choco upgrade -y nodejs.install --cacheLocation="$ChocoCachePath" #working
-# }
-
-# Tools with installers placed in the Utilities folder.
-Write-Host ""
-Write-Host "Installing Special Apps into C:\Utilities folder." -ForegroundColor Green
-Write-Host "------------------------------------" -ForegroundColor Green
-choco upgrade openssl.light --cacheLocation="$ChocoCachePath" --params "/InstallDir:C:\Utilities\openssl" #working
-
-
-# # Unmodified choco upgrades
-# # -------------------------
-# choco upgrade 7zip.install -y
-# choco upgrade chocolatey-core.extension -y
-# choco upgrade filezilla -y
-# choco upgrade github-desktop -y
-# choco upgrade glogg -y
-# choco upgrade notepadplusplus.install -y
-# choco upgrade paint.net -y
-# choco upgrade rdcman -y
-# choco upgrade softerraldapbrowser -y
-# choco upgrade sql-server-management-studio -y
-# choco upgrade teamviewer -y
-# choco windowsfeatures TelnetClient
-# choco upgrade vscode -y
-# choco upgrade chocolatey-vscode -y
-# choco upgrade vscode-ansible -y
-# choco upgrade vscode-icons -y
-# choco upgrade vscode-mssql -y
-# choco upgrade vscode-powershell -y
-# choco upgrade vscode-python -y
-# choco upgrade vscode-yaml -y
-# #choco upgrade visualstudio2019community -y
-# choco upgrade vlc -y
-# choco upgrade windirstat -y
-# choco upgrade winmerge -y
-# choco upgrade winscp -y

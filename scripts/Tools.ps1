@@ -24,15 +24,16 @@ Write-Host "------------------------------------" -ForegroundColor Green
 (New-Object System.Net.WebClient).DownloadFile("https://releases.hashicorp.com/terraform/0.12.23/terraform_0.12.23_windows_amd64.zip","$Env:TEMP\terraform_0.12.23_windows_amd64.zip");(Expand-Archive "$Env:TEMP\terraform_0.12.23_windows_amd64.zip" -DestinationPath "C:\tools\terraform\" -Force);
 
 
-Write-Host ""
-Write-Output "Downloading and Installing Sysinternals to the C:\tools\sysinternals folder." -ForegroundColor Green
-Write-Host "------------------------------------" -ForegroundColor Green
-(New-Object System.Net.WebClient).DownloadFile("https://download.sysinternals.com/files/SysinternalsSuite.zip","$Env:TEMP\SysinternalsSuite.zip");(Expand-Archive "$Env:TEMP\SysinternalsSuite.zip" -DestinationPath "C:\tools\sysinternals\" -Force);
+# Write-Host ""
+# Write-Output "Downloading and Installing Sysinternals to the C:\tools\sysinternals folder." -ForegroundColor Green
+# Write-Host "------------------------------------" -ForegroundColor Green
+# (New-Object System.Net.WebClient).DownloadFile("https://download.sysinternals.com/files/SysinternalsSuite.zip","$Env:TEMP\SysinternalsSuite.zip");(Expand-Archive "$Env:TEMP\SysinternalsSuite.zip" -DestinationPath "C:\tools\sysinternals\" -Force);
+choco upgrade sysinternals --params "/InstallDir:C:\tools\sysinternals"
 
-Write-Host ""
-Write-Output "Downloading and Installing PuTTY to the C:\tools\putty folder." -ForegroundColor Green
-Write-Host "------------------------------------" -ForegroundColor Green
-(New-Object System.Net.WebClient).DownloadFile("https://the.earth.li/~sgtatham/putty/latest/w64/putty.zip","$Env:TEMP\putty.zip");(Expand-Archive "$Env:TEMP\putty.zip" -DestinationPath "C:\tools\putty\" -Force);
+# Write-Host ""
+# Write-Output "Downloading and Installing PuTTY to the C:\tools\putty folder." -ForegroundColor Green
+# Write-Host "------------------------------------" -ForegroundColor Green
+# (New-Object System.Net.WebClient).DownloadFile("https://the.earth.li/~sgtatham/putty/latest/w64/putty.zip","$Env:TEMP\putty.zip");(Expand-Archive "$Env:TEMP\putty.zip" -DestinationPath "C:\tools\putty\" -Force);
 #
 #(New-Object System.Net.WebClient).DownloadFile("https://download.teamviewer.com/download/TeamViewerPortable.zip","$Env:TEMP\TeamViewerPortable.zip");(Expand-Archive "$Env:TEMP\TeamViewerPortable.zip" -DestinationPath "$Env:USERPROFILE\AppData\Local\TeamViewerPortable\" -Force);
 #(New-Object System.Net.WebClient).DownloadFile("https://typora.io/windows/typora-setup-x64.exe","$Env:TEMP\typora-setup-x64.exe");cmd /c '%TEMP%\typora-setup-x64.exe /SILENT'
@@ -49,4 +50,5 @@ Write-Host "------------------------------------" -ForegroundColor Green
 Write-Host ""
 Write-Host "Adding PuTTY and Sysinternal to the path" -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
-setx /M PATH "$($env:path);C:\tools\putty;C:\tools\sysinternals;C:\tools\terraform;C:\tools\wget"
+# setx /M PATH "$($env:path);C:\tools\putty;C:\tools\sysinternals;C:\tools\terraform;C:\tools\wget"
+setx /M PATH "$($env:path);C:\tools\sysinternals;C:\tools\terraform;C:\tools\wget"

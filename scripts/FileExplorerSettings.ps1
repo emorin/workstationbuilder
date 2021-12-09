@@ -1,3 +1,11 @@
+################################
+#### File Explorer Settings ####
+################################
+
+Write-Host ""
+Write-Host "Setting up File Explorer Settings..." -ForegroundColor Gray
+Write-Host "------------------------------------" -ForegroundColor Gray
+
 #--- Configuring Windows properties ---
 #--- Windows Features ---
 # -----------------------------------------------------------------------------

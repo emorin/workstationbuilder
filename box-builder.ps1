@@ -21,6 +21,25 @@ $Boxstarter.RebootOk=$true # Allow reboots?
 $Boxstarter.NoPassword=$false # Is this a machine with no login password?
 $Boxstarter.AutoLogin=$true # Save my password securely and auto-login after a reboot
 
+# Downloads of non-chocolatey installed apps will go here (within system root)
+$UtilDownloadPath = join-path $env:systemdrive 'Utilities\Downloads'
+
+# Hahicorp manually installed apps go here and this gets added to your path
+$UtilBinPath = join-path $env:systemdrive 'Utilities\bin'
+
+# some manual installs: vscode-insiders and typora
+$ManualDownloadInstall = @{
+    'vscodeinsiders.exe' = 'https://go.microsoft.com/fwlink/?Linkid=852155'
+   # 'vscode.exe' = 'https://go.microsoft.com/fwlink/?linkid=852157'
+    'typora-setup-x64.exe' = 'https://typora.io/windows/typora-setup-x64.exe'
+    'skypeonlinepowershell.exe' = 'https://download.microsoft.com/download/2/0/5/2050B39B-4DA5-48E0-B768-583533B42C3B/SkypeOnlinePowershell.exe'
+}
+
+# Chocolatey packages to install
+# $ChocoInstallsMain = [System.Collections.ArrayList]::new()
+$MasterChocoInstalls = @()
+
+
 ######################################
 #### make sure we're not bothered ####
 ######################################
@@ -96,10 +115,51 @@ function chocoWindowsFeature {
 $ConfirmPreference = "None" #ensure installing powershell modules don't prompt on needed dependencies
 
 #--- Setting up Windows ---
-executeScript "SystemConfiguration.ps1";
 executeScript "FileExplorerSettings.ps1";
+executeScript "SystemConfiguration.ps1";
 executeScript "RemoveDefaultApps.ps1";
-executeScript "CommonAdminTools.ps1";
+executeScript "Fonts.ps1";
+# executeScript "Browsers.ps1";
+# executeScript "CommonAdminTools.ps1";
+
+<#
+    Install any chocolatey packages we want setup now
+#>
+Write-Output "Installing software via chocolatey"
+
+# Don't try to download and install a package if it shows already installed
+$InstalledChocoPackages = (Get-ChocoPackages).Name
+$MasterChocoInstalls = $MasterChocoInstalls | Where { $InstalledChocoPackages -notcontains $_ }
+
+if ($MasterChocoInstalls.Count -gt 0) {
+    # Install a ton of other crap I use or like, update $ChocoInsalls to suit your needs of course
+    $MasterChocoInstalls | Foreach-Object {
+        try {
+            choco upgrade -y $_ --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+        }
+        catch {
+            Write-Warning "Unable to install software package with Chocolatey: $($_)"
+        }
+    }
+}
+else {
+    Write-Output 'There were no packages to install!'
+}
+
+
+# executeScript "Tools.ps1";
+# executeScript "HyperV.ps1";
+# RefreshEnv
+# #executeScript "WSL.ps1";
+# #RefreshEnv
+# #executeScript "Docker.ps1";
+# executeScript "Azure.ps1";
+
+
+# executeScript "SystemConfiguration.ps1";
+# executeScript "FileExplorerSettings.ps1";
+# executeScript "RemoveDefaultApps.ps1";
+# # executeScript "CommonAdminTools.ps1";
 # executeScript "CommonDevTools.ps1";
 
 
