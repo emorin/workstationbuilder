@@ -15,6 +15,6 @@ $ChocoInstalls = @(
     'jetbrainsmononf'
 )
 
-$MasterChocoInstalls += $ChocoInstalls
+$MasterChocoInstalls += 'cascadiafonts'
 
 # chocoAppInstall $ChocoInstalls;
