@@ -114,6 +114,31 @@ function chocoWindowsFeature {
     }
 }
 
+function InstallChocoPackages {
+    param (
+        [array]$chocoPackages
+    ) 
+    <#
+        Install any chocolatey packages we want setup now
+    #>
+    Write-Output "Installing software via chocolatey"  
+    if ($chocoPackages.Count -gt 0) {
+        # Install a ton of other crap I use or like, update $ChocoInsalls to suit your needs of course
+        $chocoPackages | Foreach-Object {
+            try {
+                choco upgrade -y $_ --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+            }
+            catch {
+                Write-Warning "Unable to install software package with Chocolatey: $($_)"
+            }
+        }
+    }
+    else {
+        Write-Output 'There were no packages to install!'
+    }
+}
+
+
 $ConfirmPreference = "None" #ensure installing powershell modules don't prompt on needed dependencies
 
 #--- Setting up Windows ---
@@ -141,29 +166,6 @@ function Get-ChocoPackages {
 # Don't try to download and install a package if it shows already installed
 # $InstalledChocoPackages = (Get-ChocoPackages).Name
 # $MasterChocoInstalls = $MasterChocoInstalls | Where { $InstalledChocoPackages -notcontains $_ }
-function InstallChocoPackages {
-    param (
-        [array]$chocoPackages
-    ) 
-    <#
-        Install any chocolatey packages we want setup now
-    #>
-    Write-Output "Installing software via chocolatey"  
-    if ($chocoPackages.Count -gt 0) {
-        # Install a ton of other crap I use or like, update $ChocoInsalls to suit your needs of course
-        $chocoPackages | Foreach-Object {
-            try {
-                choco upgrade -y $_ --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
-            }
-            catch {
-                Write-Warning "Unable to install software package with Chocolatey: $($_)"
-            }
-        }
-    }
-    else {
-        Write-Output 'There were no packages to install!'
-    }
-}
 
 
 
