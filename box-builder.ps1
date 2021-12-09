@@ -37,7 +37,14 @@ $ManualDownloadInstall = @{
 
 # Chocolatey packages to install
 # $ChocoInstallsMain = [System.Collections.ArrayList]::new()
-$Global:MasterChocoInstalls = @()
+$MasterChocoInstalls = @(
+    'cascadiafonts'
+    'cascadia-code-nerd-font'
+    'firacode'
+    'firacodenf'
+    'jetbrainsmono'
+    'jetbrainsmononf'
+)
 
 
 ######################################
