@@ -37,7 +37,7 @@ $ManualDownloadInstall = @{
 
 # Chocolatey packages to install
 # $ChocoInstallsMain = [System.Collections.ArrayList]::new()
-$MasterChocoInstalls = @()
+$Global:MasterChocoInstalls = @()
 
 
 ######################################
