@@ -124,10 +124,7 @@ executeScript "Fonts.ps1";
 # executeScript "Browsers.ps1";
 # executeScript "CommonAdminTools.ps1";
 
-<#
-    Install any chocolatey packages we want setup now
-#>
-Write-Output "Installing software via chocolatey"
+
 
 function Get-ChocoPackages {
     if (get-command clist -ErrorAction:SilentlyContinue) {
@@ -144,21 +141,31 @@ function Get-ChocoPackages {
 # Don't try to download and install a package if it shows already installed
 # $InstalledChocoPackages = (Get-ChocoPackages).Name
 # $MasterChocoInstalls = $MasterChocoInstalls | Where { $InstalledChocoPackages -notcontains $_ }
-
-if ($MasterChocoInstalls.Count -gt 0) {
-    # Install a ton of other crap I use or like, update $ChocoInsalls to suit your needs of course
-    $MasterChocoInstalls | Foreach-Object {
-        try {
-            choco upgrade -y $_ --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
-        }
-        catch {
-            Write-Warning "Unable to install software package with Chocolatey: $($_)"
+function InstallChocoPackages {
+    param (
+        [array]$chocoPackages
+    ) 
+    <#
+        Install any chocolatey packages we want setup now
+    #>
+    Write-Output "Installing software via chocolatey"  
+    if ($chocoPackages.Count -gt 0) {
+        # Install a ton of other crap I use or like, update $ChocoInsalls to suit your needs of course
+        $chocoPackages | Foreach-Object {
+            try {
+                choco upgrade -y $_ --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+            }
+            catch {
+                Write-Warning "Unable to install software package with Chocolatey: $($_)"
+            }
         }
     }
+    else {
+        Write-Output 'There were no packages to install!'
+    }
 }
-else {
-    Write-Output 'There were no packages to install!'
-}
+
+
 
 
 # executeScript "Tools.ps1";
