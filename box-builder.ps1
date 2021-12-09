@@ -39,11 +39,6 @@ $ManualDownloadInstall = @{
 # $ChocoInstallsMain = [System.Collections.ArrayList]::new()
 $MasterChocoInstalls = @(
     'cascadiafonts'
-    'cascadia-code-nerd-font'
-    'firacode'
-    'firacodenf'
-    'jetbrainsmono'
-    'jetbrainsmononf'
 )
 
 
@@ -147,8 +142,8 @@ function Get-ChocoPackages {
 }
 
 # Don't try to download and install a package if it shows already installed
-$InstalledChocoPackages = (Get-ChocoPackages).Name
-$MasterChocoInstalls = $MasterChocoInstalls | Where { $InstalledChocoPackages -notcontains $_ }
+# $InstalledChocoPackages = (Get-ChocoPackages).Name
+# $MasterChocoInstalls = $MasterChocoInstalls | Where { $InstalledChocoPackages -notcontains $_ }
 
 if ($MasterChocoInstalls.Count -gt 0) {
     # Install a ton of other crap I use or like, update $ChocoInsalls to suit your needs of course
