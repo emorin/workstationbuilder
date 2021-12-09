@@ -127,6 +127,18 @@ executeScript "Fonts.ps1";
 #>
 Write-Output "Installing software via chocolatey"
 
+function Get-ChocoPackages {
+    if (get-command clist -ErrorAction:SilentlyContinue) {
+        clist -lo -r -all | Foreach {
+            $Name,$Version = $_ -split '\|'
+            New-Object -TypeName psobject -Property @{
+                'Name' = $Name
+                'Version' = $Version
+            }
+        }
+    }
+}
+
 # Don't try to download and install a package if it shows already installed
 $InstalledChocoPackages = (Get-ChocoPackages).Name
 $MasterChocoInstalls = $MasterChocoInstalls | Where { $InstalledChocoPackages -notcontains $_ }
