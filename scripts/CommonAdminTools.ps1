@@ -1,6 +1,6 @@
-######################################
+############################
 #### Common Admin Tools ####
-######################################
+############################
 
 Write-Host ""
 Write-Host "Installing Common Admin Applications..." -ForegroundColor Gray
@@ -8,19 +8,36 @@ Write-Host "------------------------------------" -ForegroundColor Gray
 
 #--- Create a folder for Utilities installs ---
 Write-Host ""
-Write-Output "Creating bin folder on C:\" -ForegroundColor Green
+Write-Output "Creating $UtilBinPath folder..." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
-New-Item -Path C:\bin -ItemType "directory"
+New-Item -Path $UtilBinPath -ItemType "directory"
 
-chocoAppInstall "lockhunter,chocolateygui,7zip.install,notepadplusplus.install,chocolatey-core.extension,powertoys,putty.install,wiztree,klogg,autohotkey.install,sizer,teracopy";
+$ChocoInstalls = @(
+    'lockhunter'
+    'chocolateygui'
+    'chocolatey-core.extension'
+    'powertoys'
+    'wiztree'
+    'klogg'
+    'sizer'
+    'teracopy'
+    '7zip.install'
+    'notepadplusplus.install'
+    'putty.install'
+    'autohotkey.install'
+)
+InstallChocoPackages $ChocoInstalls
 
 choco install powershell-core --cacheLocation="$ChocoCachePath" --install-arguments='"ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL=1 ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1 REGISTER_MANIFEST=1 ENABLE_PSREMOTING=1"' --packageparameters '"/CleanUpPath"'
 
 # Tools with installers placed in the bin folder.
 Write-Host ""
-Write-Host "Installing Special Apps into C:\bin folder." -ForegroundColor Green
+Write-Host "Installing Special Apps into $UtilBinPath folder." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
-choco upgrade openssl.light --cacheLocation="$ChocoCachePath" --params "/InstallDir:C:\bin\openssl" #working
+choco upgrade openssl.light --cacheLocation="$ChocoCachePath" --params "/InstallDir:$UtilBinPath\openssl"
+
+Add-EnvPath -Location 'User' -NewPath $UtilBinPath
+Update-SessionEnvironment
 
 # Write-Host ""
 # Write-Host "Adding Sysinternal to the path" -ForegroundColor Green

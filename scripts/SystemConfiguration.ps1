@@ -93,6 +93,13 @@ New-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDe
 # -----------------------------------------------------------------------------
 
 Write-Host ""
+Write-Host "Removing Default Printers Not Used..." -ForegroundColor Green
+Write-Host "------------------------------------" -ForegroundColor Green
+Remove-Printer -Name "Microsoft XPS Document Writer" -ErrorAction:SilentlyContinue
+Remove-Printer -Name "Fax" -ErrorAction:SilentlyContinue
+# -----------------------------------------------------------------------------
+
+Write-Host ""
 Write-Host "Restarting Explorer..." -ForegroundColor Yellow
 Write-Host "------------------------------------" -ForegroundColor Yellow
 Stop-Process -ProcessName Explorer

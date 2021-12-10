@@ -11,6 +11,8 @@ $cred=Get-Credential domain\username
 Install-BoxstarterPackage -PackageName https://gist.githubusercontent.com/flcdrg/87802af4c92527eb8a30/raw/boxstarter-bare.ps1 -Credential $cred
 ### End 
 
+Set-ExecutionPolicy Bypass -Scope Process -Force;
+. { iwr -useb http://boxstarter.org/bootstrapper.ps1 } | iex; get-boxstarter -Force
 Install-BoxstarterPackage -PackageName https://raw.githubusercontent.com/emorin/workstationbuilder/main/box-builder.ps1
 
 Install-BoxstarterPackage -PackageName https://raw.githubusercontent.com/emorin/workstationbuilder/main/box-builder.ps1 -DisableReboots
@@ -27,6 +29,10 @@ $UtilDownloadPath = join-path $env:systemdrive 'Utilities\Downloads'
 # Hahicorp manually installed apps go here and this gets added to your path
 $UtilBinPath = join-path $env:systemdrive 'Utilities\bin'
 
+# If (-not (Test-Path $UtilBinPath)) {
+#     mkdir $UtilBinPath -Force
+# }
+
 # some manual installs: vscode-insiders and typora
 $ManualDownloadInstall = @{
     'vscodeinsiders.exe' = 'https://go.microsoft.com/fwlink/?Linkid=852155'
@@ -37,10 +43,6 @@ $ManualDownloadInstall = @{
 
 # Chocolatey packages to install
 # $ChocoInstallsMain = [System.Collections.ArrayList]::new()
-$MasterChocoInstalls = @(
-    'cascadiafonts'
-)
-
 
 ######################################
 #### make sure we're not bothered ####
@@ -138,36 +140,192 @@ function InstallChocoPackages {
     }
 }
 
+function Read-Choice {     
+    Param(
+        [Parameter(Position = 0)]
+        [System.String]$Message, 
+     
+        [Parameter(Position = 1)]
+        [ValidateNotNullOrEmpty()]
+        [System.String[]]$Choices = @('&Yes', '&No', 'Yes to &All', 'No &to All'),
+     
+        [Parameter(Position = 2)]
+        [System.Int32]$DefaultChoice = 0, 
+     
+        [Parameter(Position = 3)]
+        [System.String]$Title = [string]::Empty
+    )        
+    [System.Management.Automation.Host.ChoiceDescription[]]$Poss = $Choices | ForEach-Object {            
+        New-Object System.Management.Automation.Host.ChoiceDescription "$($_)", "Sets $_ as an answer."      
+    }       
+    $Host.UI.PromptForChoice( $Title, $Message, $Poss, $DefaultChoice )
+}
+Function Get-SpecialPaths {
+    $SpecialFolders = @{}
+
+    $names = [Environment+SpecialFolder]::GetNames([Environment+SpecialFolder])
+
+    foreach($name in $names) {
+        $SpecialFolders[$name] = [Environment]::GetFolderPath($name)
+    }
+
+    $SpecialFolders
+}
+
+Function Get-EnvironmentVariableNames {
+    param (
+        [string]$Scope
+    )
+
+    ([Environment]::GetEnvironmentVariables($Scope).GetEnumerator()).Name
+}
+
+Function Get-EnvironmentVariable {
+    param (
+        [string]$Name,
+        [string]$Scope
+    )
+
+    [Environment]::GetEnvironmentVariable($Name, $Scope)
+}
+Function Update-SessionEnvironment {
+    <#
+    Ripped directly from the chocolatey project, used here just for initial setup
+    #>
+    $refreshEnv = $false
+    $invocation = $MyInvocation
+    if ($invocation.InvocationName -eq 'refreshenv') {
+        $refreshEnv = $true
+    }
+
+    if ($refreshEnv) {
+        Write-Output "Refreshing environment variables from the registry for powershell.exe. Please wait..."
+    }
+    else {
+        Write-Verbose "Refreshing environment variables from the registry."
+    }
+
+    $userName = $env:USERNAME
+    $architecture = $env:PROCESSOR_ARCHITECTURE
+    $psModulePath = $env:PSModulePath
+
+    #ordering is important here, $user comes after so we can override $machine
+    'Process', 'Machine', 'User' |
+        % {
+        $scope = $_
+        Get-EnvironmentVariableNames -Scope $scope |
+            % {
+            Set-Item "Env:$($_)" -Value (Get-EnvironmentVariable -Scope $scope -Name $_)
+        }
+    }
+
+    #Path gets special treatment b/c it munges the two together
+    $paths = 'Machine', 'User' |
+        % {
+        (Get-EnvironmentVariable -Name 'PATH' -Scope $_) -split ';'
+    } |
+        Select -Unique
+    $Env:PATH = $paths -join ';'
+
+    # PSModulePath is almost always updated by process, so we want to preserve it.
+    $env:PSModulePath = $psModulePath
+
+    # reset user and architecture
+    if ($userName) { $env:USERNAME = $userName; }
+    if ($architecture) { $env:PROCESSOR_ARCHITECTURE = $architecture; }
+
+    if ($refreshEnv) {
+        Write-Output "Finished"
+    }
+}
+
+Function Add-EnvPath {
+    # Adds a path to the $ENV:Path list for a user or system if it does not already exist (in both the system and user Path variables)
+    param (
+        [string]$Location,
+        [string]$NewPath
+    )
+
+    $AllPaths = $Env:Path -split ';'
+    if ($AllPaths -notcontains $NewPath) {
+        Write-Output "Adding Utilties bin directory path to the environmental path list: $UtilBinPath"
+
+        $NewPaths = (@(([Environment]::GetEnvironmentVariables($Location).GetEnumerator() | Where {$_.Name -eq 'Path'}).Value -split ';') + $UtilBinPath | Select-Object -Unique) -join ';'
+
+        [Environment]::SetEnvironmentVariable("PATH", $NewPaths, $Location)
+    }
+}
+
+function Start-Proc {
+    param([string]$Exe = $(Throw "An executable must be specified"),
+          [string]$Arguments,
+          [switch]$Hidden,
+          [switch]$waitforexit)
+
+    $startinfo = New-Object System.Diagnostics.ProcessStartInfo
+    $startinfo.FileName = $Exe
+    $startinfo.Arguments = $Arguments
+    if ($Hidden) {
+        $startinfo.WindowStyle = 'Hidden'
+        $startinfo.CreateNoWindow = $True
+    }
+    $process = [System.Diagnostics.Process]::Start($startinfo)
+    if ($waitforexit) { $process.WaitForExit() }
+}
 
 $ConfirmPreference = "None" #ensure installing powershell modules don't prompt on needed dependencies
+
+# Need this to download via Invoke-WebRequest
+[Net.ServicePointManager]::SecurityProtocol =  [System.Security.Authentication.SslProtocols] "tls, tls11, tls12"
+
+# Trust the psgallery for installs
+Write-Host -ForegroundColor 'Yellow' 'Setting PSGallery as a trusted installation source...'
+Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+
+# Install/Update PowershellGet and PackageManager if needed
+try {
+    Import-Module PowerShellGet
+}
+catch {
+    throw 'Unable to load PowerShellGet!'
+}
+
+# Need to set Nuget as a provider before installing modules via PowerShellGet
+$null = Install-PackageProvider NuGet -Force
+
+# Store a few things for later use
+# $SpecialPaths = Get-SpecialPaths
+$packages = Get-Package
+
+if (@($packages | Where-Object {$_.Name -eq 'PackageManagement'}).Count -eq 0) {
+    Write-Host -ForegroundColor cyan "PackageManager is installed but not being maintained via the PowerShell gallery (so it will never get updated). Forcing the install of this module through the gallery to rectify this now."
+    Install-Module PackageManagement -Force
+    Install-Module PowerShellGet -Force
+
+    Write-Host -ForegroundColor:Red "PowerShellGet and PackageManagement have been installed from the gallery. You need to close and rerun this script for them to work properly!"
+    
+    Invoke-Reboot
+}
+else {
+    $InstalledModules = (Get-InstalledModule).name
+    $ModulesToBeInstalled = $ModulesToBeInstalled | Where-Object {$InstalledModules -notcontains $_}
+    if ($ModulesToBeInstalled.Count -gt 0) {
+        Write-Host -ForegroundColor:cyan "Installing modules that are not already installed via powershellget. Modules to be installed = $($ModulesToBeInstalled.Count)"
+        Install-Module -Name $ModulesToBeInstalled -AllowClobber -AcceptLicense -ErrorAction:SilentlyContinue
+    }
+    else {
+        Write-Output "No modules were found that needed to be installed."
+    }
+}
 
 #--- Setting up Windows ---
 executeScript "FileExplorerSettings.ps1";
 executeScript "SystemConfiguration.ps1";
 executeScript "RemoveDefaultApps.ps1";
 executeScript "Fonts.ps1";
-# executeScript "Browsers.ps1";
-# executeScript "CommonAdminTools.ps1";
-
-
-
-function Get-ChocoPackages {
-    if (get-command clist -ErrorAction:SilentlyContinue) {
-        clist -lo -r -all | Foreach {
-            $Name,$Version = $_ -split '\|'
-            New-Object -TypeName psobject -Property @{
-                'Name' = $Name
-                'Version' = $Version
-            }
-        }
-    }
-}
-
-# Don't try to download and install a package if it shows already installed
-# $InstalledChocoPackages = (Get-ChocoPackages).Name
-# $MasterChocoInstalls = $MasterChocoInstalls | Where { $InstalledChocoPackages -notcontains $_ }
-
-
+executeScript "Browsers.ps1";
+executeScript "CommonAdminTools.ps1";
+# executeScript "CommonDevTools.ps1";
 
 
 # executeScript "Tools.ps1";
@@ -179,27 +337,6 @@ function Get-ChocoPackages {
 # executeScript "Azure.ps1";
 
 
-# executeScript "SystemConfiguration.ps1";
-# executeScript "FileExplorerSettings.ps1";
-# executeScript "RemoveDefaultApps.ps1";
-# # executeScript "CommonAdminTools.ps1";
-# executeScript "CommonDevTools.ps1";
-
-
-# # Update Windows and reboot if necessary
-# $section = "WindowsUpdate"
-# try {
-#     #Give it a few minutes, may be working on another update?
-#     if ( -not ($section -in $reboots) ) { start-sleep -s 180 }
-#     Enable-MicrosoftUpdate
-#     Install-WindowsUpdate -AcceptEula
-# }
-# catch {
-#     # Try one more reboot...
-#     $section = "0x80240016Error"
-#     if ( -not ($section -in $reboots) ) { Add-Content $reboot_log $section ; Invoke-Reboot } 
-# }
-# if ( -not ($section -in $reboots) ) { Add-Content $reboot_log $section ; Invoke-Reboot } 
 
 
 # # Windows features
@@ -208,62 +345,22 @@ function Get-ChocoPackages {
 # choco install Containers -source windowsfeatures
 # choco install Microsoft-Windows-Subsystem-Linux -source windowsfeatures
 
-# # Remove unwanted Store apps
-# Get-AppxPackage Facebook.Facebook | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage TuneIn.TuneInRadio | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage Microsoft.MinecraftUWP | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage Microsoft.MicrosoftSolitaireCollection | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage KeeperSecurityInc.Keeper | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage 2FE3CB00.PicsArt-PhotoStudio | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage 9E2F88E3.Twitter | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name *Twitter | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name *MarchofEmpires | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name king.com.* | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name Microsoft.3DBuilder | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name *Bing* | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name Microsoft.Office.Word | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name Microsoft.Office.PowerPoint | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name Microsoft.Office.Excel | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name Microsoft.MicrosoftOfficeHub | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name DellInc.PartnerPromo | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name Microsoft.Office.OneNote | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name Microsoft.MicrosoftSolitaireCollection | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name Microsoft.SkypeApp | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name Microsoft.YourPhone | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name *XBox* | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name Microsoft.MixedReality.Portal | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name Microsoft.Microsoft3DViewer | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name SpotifyAB.SpotifyMusic | Remove-AppxPackage -ErrorAction SilentlyContinue
-# Get-AppxPackage -AllUser -Name Microsoft.MSPaint | Remove-AppxPackage -ErrorAction SilentlyContinue # Paint3D
-
 # Write-Host "Temp: $($env:temp)"
 
-# chocoAppInstall "googlechrome,firefox";
-
-# # cup firefox --cacheLocation="$ChocoCachePath"
-# # choco pin add -n=firefox
-
-# cup 7zip --cacheLocation="$ChocoCachePath"
 # cup azure-cli --cacheLocation="$ChocoCachePath"
 # cup azure-functions-core-tools-3 --cacheLocation="$ChocoCachePath" --params "'/x64'"
 # cup becyicongrabber --cacheLocation="$ChocoCachePath"
-# choco install cascadia-code-nerd-font --cacheLocation="$ChocoCachePath"
+
 
 # if ((get-wmiobject Win32_ComputerSystem).manufacturer -like "*Dell*") {
 #     cup dellcommandupdate-uwp --cacheLocation="$ChocoCachePath"
 # }
 
-# cup eartrumpet --cacheLocation="$ChocoCachePath"
-
 # cup git --cacheLocation="$ChocoCachePath"
 
 # cup hwinfo --cacheLocation="$ChocoCachePath"
 
-# if ((get-wmiobject Win32_ComputerSystem).manufacturer -like "*Lenovo*") {
-#     cup lenovo-thinkvantage-system-update --cacheLocation="$ChocoCachePath"
-# }
 # cup paint.net --cacheLocation="$ChocoCachePath"
-# # cup mousewithoutborders --cacheLocation="$ChocoCachePath"
 
 # cup msbuild-structured-log-viewer --cacheLocation="$ChocoCachePath"
 # cup nodejs --cacheLocation="$ChocoCachePath"
@@ -283,7 +380,6 @@ function Get-ChocoPackages {
 
 # cup rocolatey --cacheLocation="$ChocoCachePath"
 # cup rss-builder --cacheLocation="$ChocoCachePath"
-# cup slack --cacheLocation="$ChocoCachePath"
 
 # cup tortoisegit --cacheLocation="$ChocoCachePath"
 # # cup tortoisesvn --cacheLocation="$ChocoCachePath"
@@ -331,20 +427,13 @@ function Get-ChocoPackages {
 # cup beyondcompare --cacheLocation="$ChocoCachePath"
 # cup beyondcompare-integration --cacheLocation="$ChocoCachePath"
 
-# Update-ExecutionPolicy RemoteSigned
-# Set-WindowsExplorerOptions -EnableShowFileExtensions -EnableExpandToOpenFolder
-
 # # No SMB1 - https://blogs.technet.microsoft.com/filecab/2016/09/16/stop-using-smb1/
 # Disable-WindowsOptionalFeature -Online -FeatureName smb1protocol
-
-# Enable-RemoteDesktop
-
-# Install-WindowsUpdate -AcceptEula -GetUpdatesFromMS
 
 # # Cleanup reboot log temp file
 # Remove-Item $reboot_log -Force
 
 #--- reenabling critial items ---
-Enable-UAC
 Enable-MicrosoftUpdate
-Install-WindowsUpdate -acceptEula
+Install-WindowsUpdate -AcceptEula -GetUpdatesFromMS
+Enable-UAC
