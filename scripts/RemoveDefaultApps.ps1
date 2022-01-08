@@ -22,7 +22,6 @@ function removeApp {
 
 $applicationList = @(
 	"Microsoft.3DBuilder"	
-	"Microsoft.549981C3F5F10"
 	"Microsoft.BingNews"
 	"Microsoft.BingWeather"
 	"Microsoft.CommsPhone"
