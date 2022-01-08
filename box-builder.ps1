@@ -27,11 +27,8 @@ $Boxstarter.AutoLogin=$true # Save my password securely and auto-login after a r
 $UtilDownloadPath = join-path $env:systemdrive 'Utilities\Downloads'
 
 # Hahicorp manually installed apps go here and this gets added to your path
-$UtilBinPath = join-path $env:systemdrive 'Utilities\bin'
-
-# If (-not (Test-Path $UtilBinPath)) {
-#     mkdir $UtilBinPath -Force
-# }
+# $UtilBinPath = join-path $env:systemdrive 'Utilities\bin'
+$UtilPath = join-path $env:systemdrive 'Utils'
 
 # some manual installs: vscode-insiders and typora
 $ManualDownloadInstall = @{
@@ -188,56 +185,6 @@ Function Get-EnvironmentVariable {
 
     [Environment]::GetEnvironmentVariable($Name, $Scope)
 }
-Function Update-SessionEnvironment {
-    <#
-    Ripped directly from the chocolatey project, used here just for initial setup
-    #>
-    $refreshEnv = $false
-    $invocation = $MyInvocation
-    if ($invocation.InvocationName -eq 'refreshenv') {
-        $refreshEnv = $true
-    }
-
-    if ($refreshEnv) {
-        Write-Output "Refreshing environment variables from the registry for powershell.exe. Please wait..."
-    }
-    else {
-        Write-Verbose "Refreshing environment variables from the registry."
-    }
-
-    $userName = $env:USERNAME
-    $architecture = $env:PROCESSOR_ARCHITECTURE
-    $psModulePath = $env:PSModulePath
-
-    #ordering is important here, $user comes after so we can override $machine
-    'Process', 'Machine', 'User' |
-        % {
-        $scope = $_
-        Get-EnvironmentVariableNames -Scope $scope |
-            % {
-            Set-Item "Env:$($_)" -Value (Get-EnvironmentVariable -Scope $scope -Name $_)
-        }
-    }
-
-    #Path gets special treatment b/c it munges the two together
-    $paths = 'Machine', 'User' |
-        % {
-        (Get-EnvironmentVariable -Name 'PATH' -Scope $_) -split ';'
-    } |
-        Select -Unique
-    $Env:PATH = $paths -join ';'
-
-    # PSModulePath is almost always updated by process, so we want to preserve it.
-    $env:PSModulePath = $psModulePath
-
-    # reset user and architecture
-    if ($userName) { $env:USERNAME = $userName; }
-    if ($architecture) { $env:PROCESSOR_ARCHITECTURE = $architecture; }
-
-    if ($refreshEnv) {
-        Write-Output "Finished"
-    }
-}
 
 Function Add-EnvPath {
     # Adds a path to the $ENV:Path list for a user or system if it does not already exist (in both the system and user Path variables)
@@ -248,9 +195,9 @@ Function Add-EnvPath {
 
     $AllPaths = $Env:Path -split ';'
     if ($AllPaths -notcontains $NewPath) {
-        Write-Output "Adding Utilties bin directory path to the environmental path list: $UtilBinPath"
+        Write-Output "Adding Utilties bin directory path to the environmental path list: $UtilPath"
 
-        $NewPaths = (@(([Environment]::GetEnvironmentVariables($Location).GetEnumerator() | Where {$_.Name -eq 'Path'}).Value -split ';') + $UtilBinPath | Select-Object -Unique) -join ';'
+        $NewPaths = (@(([Environment]::GetEnvironmentVariables($Location).GetEnumerator() | Where {$_.Name -eq 'Path'}).Value -split ';') + $UtilPath | Select-Object -Unique) -join ';'
 
         [Environment]::SetEnvironmentVariable("PATH", $NewPaths, $Location)
     }
@@ -325,89 +272,31 @@ executeScript "RemoveDefaultApps.ps1";
 executeScript "Fonts.ps1";
 executeScript "Browsers.ps1";
 executeScript "CommonAdminTools.ps1";
-# executeScript "CommonDevTools.ps1";
-
-
-# executeScript "Tools.ps1";
-# executeScript "HyperV.ps1";
-# RefreshEnv
-# #executeScript "WSL.ps1";
-# #RefreshEnv
-# #executeScript "Docker.ps1";
-# executeScript "Azure.ps1";
-
-
-
+executeScript "CommonDevTools.ps1";
+executeScript "Tools.ps1";
+executeScript "HyperV.ps1";
+executeScript "WSL.ps1";
+executeScript "Docker.ps1";
+executeScript "Azure.ps1";
+executeScript "SQL.ps1";
+executeScript "OtherTools.ps1";
 
 # # Windows features
-# choco install Microsoft-Hyper-V-All -source windowsfeatures
 # choco install IIS-WebServerRole IIS-NetFxExtensibility45 IIS-HttpCompressionDynamic IIS-WindowsAuthentication IIS-ASPNET45 IIS-IIS6ManagementCompatibility -source windowsfeatures
-# choco install Containers -source windowsfeatures
-# choco install Microsoft-Windows-Subsystem-Linux -source windowsfeatures
 
-# Write-Host "Temp: $($env:temp)"
-
-# cup azure-cli --cacheLocation="$ChocoCachePath"
-# cup azure-functions-core-tools-3 --cacheLocation="$ChocoCachePath" --params "'/x64'"
 # cup becyicongrabber --cacheLocation="$ChocoCachePath"
-
 
 # if ((get-wmiobject Win32_ComputerSystem).manufacturer -like "*Dell*") {
 #     cup dellcommandupdate-uwp --cacheLocation="$ChocoCachePath"
 # }
 
-# cup git --cacheLocation="$ChocoCachePath"
-
 # cup hwinfo --cacheLocation="$ChocoCachePath"
 
-# cup paint.net --cacheLocation="$ChocoCachePath"
-
 # cup msbuild-structured-log-viewer --cacheLocation="$ChocoCachePath"
-# cup nodejs --cacheLocation="$ChocoCachePath"
-# cup nuget.commandline --cacheLocation="$ChocoCachePath"
-# # cup NugetPackageExplorer --cacheLocation="$ChocoCachePath" # Use Store version
-# choco install office365business --cacheLocation="$ChocoCachePath" --params='/exclude:"Access Groove Lync OneDrive"'
 
-# cup nvm --cacheLocation="$ChocoCachePath"
 # cup PDFXchangeEditor --cacheLocation="$ChocoCachePath" --params '"/NoDesktopShortcuts /NoUpdater"'
-# cup python2 --cacheLocation="$ChocoCachePath" # Required by some NPM/Node packages (eg node-sass)
-
-# # This will conflict with earlier font packages, so make sure it happens after a reboot
-# cup FiraCode --cacheLocation="$ChocoCachePath" # font
-
 # cup pingplotter --cacheLocation="$ChocoCachePath"
-# cup powershell-core --cacheLocation="$ChocoCachePath"
-
-# cup rocolatey --cacheLocation="$ChocoCachePath"
-# cup rss-builder --cacheLocation="$ChocoCachePath"
-
-# cup tortoisegit --cacheLocation="$ChocoCachePath"
-# # cup tortoisesvn --cacheLocation="$ChocoCachePath"
-# #cup vagrant --cacheLocation="$ChocoCachePath" # Not sure why, but Boxstarter gets in a loop thinking this fails with 3010 (which should be fine)
-# cup vscode --cacheLocation="$ChocoCachePath"
-# #choco pin add -n=visualstudiocode
-# cup vswhere --cacheLocation="$ChocoCachePath"
 # cup windirstat --cacheLocation="$ChocoCachePath"
-# cup yarn --cacheLocation="$ChocoCachePath"
-# cup zoom --cacheLocation="$ChocoCachePath"
-# cup zoomit --cacheLocation="$ChocoCachePath"
-
-# cup sql-server-management-studio --cacheLocation="$ChocoCachePath"
-# # SSMS installer includes azure data studio
-# # cup azure-data-studio --cacheLocation="$ChocoCachePath"
-
-# # Visual Studio 2019
-# choco install visualstudio2019enterprise --cacheLocation="$ChocoCachePath"
-# choco install visualstudio2019-workload-visualstudioextension --cacheLocation="$ChocoCachePath"
-# choco install visualstudio2019-workload-manageddesktop --cacheLocation="$ChocoCachePath"
-# choco install visualstudio2019-workload-netweb --cacheLocation="$ChocoCachePath" # ASP.NET and web development
-# choco install visualstudio2019-workload-netcoretools --cacheLocation="$ChocoCachePath" # .NET Core cross-platform development
-# choco install visualstudio2019-workload-node --cacheLocation="$ChocoCachePath" #Node.js development
-# choco install visualstudio2019-workload-azure --cacheLocation="$ChocoCachePath"
-
-# cup dotUltimate --cacheLocation="$ChocoCachePath" --params "'/NoCpp /NoTeamCityAddin /NoRider'"
-
-# # choco install docker-desktop --cacheLocation="$ChocoCachePath"
 
 # # $docker = "C:\Program Files\Docker\Docker\Resources\bin\docker.exe"
 
@@ -423,9 +312,9 @@ executeScript "CommonAdminTools.ps1";
 # #PowerShell help
 # # Update-Help -ErrorAction SilentlyContinue
 
-# # Install after other packages, so integration will work
-# cup beyondcompare --cacheLocation="$ChocoCachePath"
-# cup beyondcompare-integration --cacheLocation="$ChocoCachePath"
+# Install after other packages, so integration will work
+cup beyondcompare --cacheLocation="$ChocoCachePath"
+cup beyondcompare-integration --cacheLocation="$ChocoCachePath"
 
 # # No SMB1 - https://blogs.technet.microsoft.com/filecab/2016/09/16/stop-using-smb1/
 # Disable-WindowsOptionalFeature -Online -FeatureName smb1protocol

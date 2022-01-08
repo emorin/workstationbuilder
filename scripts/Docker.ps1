@@ -1,4 +1,15 @@
-Enable-WindowsOptionalFeature -Online -FeatureName containers -All
-RefreshEnv
-choco install -y docker-for-windows
-choco install -y vscode-docker
+######################################
+#### Docker ####
+######################################
+
+Write-Host ""
+Write-Host "Installing Docker Applications..." -ForegroundColor Gray
+Write-Host "------------------------------------" -ForegroundColor Gray
+
+# Enable-WindowsOptionalFeature -Online -FeatureName containers -All
+# RefreshEnv
+
+$ChocoInstalls = @(
+    'docker-desktop'
+)
+InstallChocoPackages $ChocoInstalls

@@ -7,7 +7,7 @@ Write-Host ""
 Write-Host "Setting the Time Zone to CST and syncing time..." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
 Set-TimeZone -Name "Mountain Standard Time"
-w32tm /resync /rediscover 
+# w32tm /resync /rediscover 
 # -----------------------------------------------------------------------------
 
 # Disable Xbox Gamebar

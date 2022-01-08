@@ -6,39 +6,44 @@ Write-Host ""
 Write-Host "Installing Common Development Applications..." -ForegroundColor Gray
 Write-Host "------------------------------------" -ForegroundColor Gray
 
-chocoAppInstall "lockhunter,chocolateygui,7zip.install,notepadplusplus.install,chocolatey-core.extension,powertoys,putty.install,wiztree,klogg,autohotkey.install";
-
-choco install -y vscode
-choco install ngrok
-
 Write-Host ""
 Write-Host "Installing Git for Windows..." -ForegroundColor Green
 choco upgrade git.install --cacheLocation="$ChocoCachePath" --params "/GitAndUnixToolsOnPath /NoGitLfs /SChannel /NoAutoCrlf /WindowsTerminal"
 RefreshEnv
-
-chocoAppInstall "lockhunter,chocolateygui,nodejs.install";
+Update-SessionEnvironment #refreshing env due to Git install
 
 # Tools with installers placed in the Utilities folder.
 Write-Host ""
-Write-Host "Installing Special Apps into C:\Utilities folder." -ForegroundColor Green
+Write-Host "Installing Special Apps into $UtilPath folder." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
-choco upgrade openssl.light --cacheLocation="$ChocoCachePath" --params "/InstallDir:C:\Utilities\openssl" #working
+choco upgrade openssl.light --cacheLocation="$ChocoCachePath" --params "/InstallDir:$UtilPath\openssl"
 
+$ChocoInstalls = @(
+    'ngrok'
+    'docker-desktop'
+    'github-desktop'
+    'jetbrainstoolbox'
+    'NimbleText'
+    'nodejs-lts'
+    'postman'
+    'oh-my-posh'
+    'NSwagStudio'
+    'typescript'
+    'yarn'
+    'vscode.install'
+    'mkcert'
+    'markdownmonster'
+    'dotnetfx'
+)
+InstallChocoPackages $ChocoInstalls
+RefreshEnv
+Update-SessionEnvironment #refreshing env due to Git install
 
-# # Unmodified choco upgrades
-# # -------------------------
-# choco upgrade github-desktop -y
-# choco upgrade paint.net -y
-# choco upgrade sql-server-management-studio -y
-# choco windowsfeatures TelnetClient
-# choco upgrade vscode -y
-# choco upgrade chocolatey-vscode -y
-# choco upgrade vscode-ansible -y
-# choco upgrade vscode-icons -y
-# choco upgrade vscode-mssql -y
-# choco upgrade vscode-powershell -y
-# choco upgrade vscode-python -y
-# choco upgrade vscode-yaml -y
-# #choco upgrade visualstudio2019community -y
-# choco upgrade vlc -y
-# choco upgrade winmerge -y
+# # Visual Studio 2019
+# choco install visualstudio2019enterprise --cacheLocation="$ChocoCachePath"
+# choco install visualstudio2019-workload-visualstudioextension --cacheLocation="$ChocoCachePath"
+# choco install visualstudio2019-workload-manageddesktop --cacheLocation="$ChocoCachePath"
+# choco install visualstudio2019-workload-netweb --cacheLocation="$ChocoCachePath" # ASP.NET and web development
+# choco install visualstudio2019-workload-netcoretools --cacheLocation="$ChocoCachePath" # .NET Core cross-platform development
+# choco install visualstudio2019-workload-node --cacheLocation="$ChocoCachePath" #Node.js development
+# choco install visualstudio2019-workload-azure --cacheLocation="$ChocoCachePath"
