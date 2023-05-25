@@ -40,12 +40,12 @@ RefreshEnv
 Update-SessionEnvironment #refreshing env due to Git install
 
 # # Visual Studio 2022
-choco upgrade visualstudio2022professional -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
-choco upgrade visualstudio2022-workload-netweb -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
-choco upgrade visualstudio2022-workload-azure -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
-choco upgrade visualstudio2022-workload-node -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
-choco upgrade visualstudio2022-workload-manageddesktop -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
-choco upgrade visualstudio2022-workload-netcrossplat -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
-choco upgrade visualstudio2022-workload-universal -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
-choco upgrade visualstudio2022-workload-data -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
-choco upgrade visualstudio2022-workload-office -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+#choco upgrade visualstudio2022professional -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+#choco upgrade visualstudio2022-workload-netweb -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+#choco upgrade visualstudio2022-workload-azure -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+#choco upgrade visualstudio2022-workload-node -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+#choco upgrade visualstudio2022-workload-manageddesktop -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+#choco upgrade visualstudio2022-workload-netcrossplat -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+#choco upgrade visualstudio2022-workload-universal -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+#choco upgrade visualstudio2022-workload-data -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+#choco upgrade visualstudio2022-workload-office -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
