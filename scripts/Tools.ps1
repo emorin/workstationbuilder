@@ -26,7 +26,7 @@
 Write-Host ""
 Write-Output "Downloading and Installing XrmToolBox to the $UtilPath\XrmToolbox folder." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
-(New-Object System.Net.WebClient).DownloadFile("https://github.com/MscrmTools/XrmToolBox/releases/download/v1.2021.12.53/XrmToolbox.zip","$Env:TEMP\XrmToolbox.zip");(Expand-Archive "$Env:TEMP\XrmToolbox.zip" -DestinationPath "$UtilPath\XrmToolbox\" -Force);
+(New-Object System.Net.WebClient).DownloadFile("https://github.com/MscrmTools/XrmToolBox/releases/download/v1.2023.2.64/XrmToolbox.zip","$Env:TEMP\XrmToolbox.zip");(Expand-Archive "$Env:TEMP\XrmToolbox.zip" -DestinationPath "$UtilPath\XrmToolbox\" -Force);
 
 
 # # Write-Host ""
