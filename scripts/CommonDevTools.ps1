@@ -8,7 +8,8 @@ Write-Host "------------------------------------" -ForegroundColor Gray
 
 Write-Host ""
 Write-Host "Installing Git for Windows..." -ForegroundColor Green
-choco upgrade git.install --cacheLocation="$ChocoCachePath" --params "/GitAndUnixToolsOnPath /NoGitLfs /SChannel /NoAutoCrlf /WindowsTerminal"
+#choco upgrade git.install --cacheLocation="$ChocoCachePath" --params "/GitAndUnixToolsOnPath /NoGitLfs /SChannel /NoAutoCrlf /WindowsTerminal"
+choco upgrade git.install --cacheLocation="$ChocoCachePath" --params "'/GitAndUnixToolsOnPath /WindowsTerminal /NoAutoCrlf'"
 RefreshEnv
 Update-SessionEnvironment #refreshing env due to Git install
 
