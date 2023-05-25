@@ -6,6 +6,10 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 
 # 2. From Same PowerShell, run this:
 <#
+##NEW WAY 2022##
+Install-BoxstarterPackage -PackageName https://raw.githubusercontent.com/emorin/workstationbuilder/main/box-builder.ps1
+
+
 ### With User Credentials
 $cred=Get-Credential domain\username
 Install-BoxstarterPackage -PackageName https://gist.githubusercontent.com/flcdrg/87802af4c92527eb8a30/raw/boxstarter-bare.ps1 -Credential $cred
@@ -13,6 +17,7 @@ Install-BoxstarterPackage -PackageName https://gist.githubusercontent.com/flcdrg
 
 Set-ExecutionPolicy Bypass -Scope Process -Force;
 . { iwr -useb http://boxstarter.org/bootstrapper.ps1 } | iex; get-boxstarter -Force
+##NEW WAY 2022##
 Install-BoxstarterPackage -PackageName https://raw.githubusercontent.com/emorin/workstationbuilder/main/box-builder.ps1
 
 Install-BoxstarterPackage -PackageName https://raw.githubusercontent.com/emorin/workstationbuilder/main/box-builder.ps1 -DisableReboots
