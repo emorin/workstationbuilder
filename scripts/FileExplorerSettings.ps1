@@ -13,7 +13,7 @@ Write-Host "------------------------------------" -ForegroundColor Gray
 Write-Host ""
 Write-Host "Showing hidden files, protected OS files, and file extensions..." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
-Set-WindowsExplorerOptions -EnableShowHiddenFilesFoldersDrives -EnableShowProtectedOSFiles -EnableShowFileExtensions -EnableShowFullPathInTitleBar -EnableExpandToOpenFolder -DisableOpenFileExplorerToQuickAccess
+Set-WindowsExplorerOptions -EnableShowHiddenFilesFoldersDrives -EnableShowProtectedOSFiles -EnableShowFileExtensions -EnableExpandToOpenFolder
 # -----------------------------------------------------------------------------
 # # adds things back in your left pane like recycle bin
 # Write-Host ""
@@ -28,10 +28,10 @@ Set-WindowsExplorerOptions -EnableShowHiddenFilesFoldersDrives -EnableShowProtec
 # # Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name AutoCheckSelect -Type DWord -Value 1 -Force
 # New-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name AutoCheckSelect -PropertyType DWord -Value 1 -Force
 # -----------------------------------------------------------------------------
-# taskbar where window is open for multi-monitor
-Write-Host ""
-Write-Host "Setting the taskbar where window is open for multi-monitor..." -ForegroundColor Green
-Write-Host "------------------------------------" -ForegroundColor Green
-Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name MMTaskbarMode -Value 2
-# -----------------------------------------------------------------------------
+# # taskbar where window is open for multi-monitor
+#Write-Host ""
+#Write-Host "Setting the taskbar where window is open for multi-monitor..." -ForegroundColor Green
+#Write-Host "------------------------------------" -ForegroundColor Green
+#Set-ItemProperty -Path HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced -Name MMTaskbarMode -Value 2
+## -----------------------------------------------------------------------------
 
