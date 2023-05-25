@@ -120,7 +120,7 @@ function chocoWindowsFeature {
 
 function InstallChocoPackages {
     param (
-        [array]$chocoPackages
+        [array]$chocolateyAppList
     ) 
     <#
         Install any chocolatey packages we want setup now
