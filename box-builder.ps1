@@ -125,7 +125,11 @@ function InstallChocoPackages {
         # Install a ton of other crap I use or like, update $ChocoInsalls to suit your needs of course
         $chocoPackages | Foreach-Object {
             try {
-                choco upgrade -y $_ --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+                #choco upgrade $app -y $_ --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+		Write-Host ""
+                Write-Host "Installing $app" -ForegroundColor Green
+                Write-Host "------------------------------------" -ForegroundColor Green
+                 & choco upgrade $app -y --cacheLocation="$ChocoCachePath" | Write-Output
             }
             catch {
                 Write-Warning "Unable to install software package with Chocolatey: $($_)"
