@@ -319,8 +319,8 @@ executeScript "OtherTools.ps1";
 # # Update-Help -ErrorAction SilentlyContinue
 
 # Install after other packages, so integration will work
-cup beyondcompare --cacheLocation="$ChocoCachePath"
-cup beyondcompare-integration --cacheLocation="$ChocoCachePath"
+choco upgrade beyondcompare -y --cacheLocation="$ChocoCachePath"
+choco upgrade beyondcompare-integration -y --cacheLocation="$ChocoCachePath"
 
 # # No SMB1 - https://blogs.technet.microsoft.com/filecab/2016/09/16/stop-using-smb1/
 # Disable-WindowsOptionalFeature -Online -FeatureName smb1protocol
