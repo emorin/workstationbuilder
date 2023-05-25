@@ -16,16 +16,13 @@ If (-not (Test-Path $UtilPath)) {
 }
 
 $ChocoInstalls = @(
-    'lockhunter'
     'chocolateygui'
     'chocolatey-core.extension'
     'powertoys'
     'wiztree'
-    'klogg'
     'sizer'
     'teracopy'
     'sublimetext4'
-    '7zip.install'
     'notepadplusplus.install'
     'putty.install'
     'autohotkey.install'
