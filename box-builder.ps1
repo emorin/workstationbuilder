@@ -100,7 +100,7 @@ function chocoAppInstall {
     }
 }
 
-function InstallChocoPackages {
+function InstallChocoPackages_OLD {
     param (
         [array]$chocolateyAppList
     ) 
@@ -118,6 +118,33 @@ function InstallChocoPackages {
             Write-Host "Installing $app" -ForegroundColor Green
             Write-Host "------------------------------------" -ForegroundColor Green
             & choco upgrade $app -y --cacheLocation="$ChocoCachePath" | Write-Output
+        }
+    }
+    else {
+        Write-Output 'There were no packages to install!'
+    }
+}
+
+function InstallChocoPackages {
+    param (
+        [array]$chocoPackages
+    ) 
+    <#
+        Install any chocolatey packages we want setup now
+    #>
+    Write-Output "Installing software via chocolatey"  
+    if ($chocoPackages.Count -gt 0) {
+        # Install a ton of other crap I use or like, update $ChocoInsalls to suit your needs of course
+        $chocoPackages | Foreach-Object {
+            try {
+	    	Write-Host ""
+            	Write-Host "Installing $_" -ForegroundColor Green
+            	Write-Host "------------------------------------" -ForegroundColor Green
+                choco upgrade -y $_ --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+            }
+            catch {
+                Write-Warning "Unable to install software package with Chocolatey: $($_)"
+            }
         }
     }
     else {
