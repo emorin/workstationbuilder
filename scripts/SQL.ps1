@@ -8,5 +8,6 @@ Write-Host "------------------------------------" -ForegroundColor Gray
 
 $ChocoInstalls = @(
     'sql-server-management-studio'
+    'sqltoolbelt'
 )
 InstallChocoPackages $ChocoInstalls
