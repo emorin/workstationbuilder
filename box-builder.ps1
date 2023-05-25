@@ -20,8 +20,8 @@ Install-BoxstarterPackage -PackageName https://raw.githubusercontent.com/emorin/
 
 # Boxstarter options
 $Boxstarter.RebootOk=$true # Allow reboots?
-$Boxstarter.NoPassword=$false # Is this a machine with no login password?
-$Boxstarter.AutoLogin=$true # Save my password securely and auto-login after a reboot
+#$Boxstarter.NoPassword=$false # Is this a machine with no login password?
+#$Boxstarter.AutoLogin=$true # Save my password securely and auto-login after a reboot
 
 # Downloads of non-chocolatey installed apps will go here (within system root)
 $UtilDownloadPath = join-path $env:systemdrive 'Utilities\Downloads'
