@@ -39,11 +39,13 @@ InstallChocoPackages $ChocoInstalls
 RefreshEnv
 Update-SessionEnvironment #refreshing env due to Git install
 
-# # Visual Studio 2019
-# choco install visualstudio2019enterprise --cacheLocation="$ChocoCachePath"
-# choco install visualstudio2019-workload-visualstudioextension --cacheLocation="$ChocoCachePath"
-# choco install visualstudio2019-workload-manageddesktop --cacheLocation="$ChocoCachePath"
-# choco install visualstudio2019-workload-netweb --cacheLocation="$ChocoCachePath" # ASP.NET and web development
-# choco install visualstudio2019-workload-netcoretools --cacheLocation="$ChocoCachePath" # .NET Core cross-platform development
-# choco install visualstudio2019-workload-node --cacheLocation="$ChocoCachePath" #Node.js development
-# choco install visualstudio2019-workload-azure --cacheLocation="$ChocoCachePath"
+# # Visual Studio 2022
+choco upgrade visualstudio2022professional -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+choco upgrade visualstudio2022-workload-netweb -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+choco upgrade visualstudio2022-workload-azure -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+choco upgrade visualstudio2022-workload-node -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+choco upgrade visualstudio2022-workload-manageddesktop -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+choco upgrade visualstudio2022-workload-netcrossplat -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+choco upgrade visualstudio2022-workload-universal -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+choco upgrade visualstudio2022-workload-data -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+choco upgrade visualstudio2022-workload-office -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
