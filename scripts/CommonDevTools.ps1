@@ -35,6 +35,7 @@ $ChocoInstalls = @(
     'mkcert'
     'markdownmonster'
     'dotnetfx'
+    'gitkraken'
 )
 InstallChocoPackages $ChocoInstalls
 RefreshEnv
