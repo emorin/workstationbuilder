@@ -19,6 +19,5 @@ $ChocoInstalls = @(
     'musicbee'
     'picard'
     'powerchute-personal'
-    'streamdeck'
 )
 InstallChocoPackages $ChocoInstalls
