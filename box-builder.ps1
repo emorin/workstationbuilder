@@ -358,6 +358,6 @@ choco upgrade beyondcompare-integration -y --cacheLocation="$ChocoCachePath"
 # Remove-Item $reboot_log -Force
 
 #--- reenabling critial items ---
-Enable-MicrosoftUpdate
-Install-WindowsUpdate -AcceptEula -GetUpdatesFromMS
 Enable-UAC
+Enable-MicrosoftUpdate
+Install-WindowsUpdate -acceptEula
