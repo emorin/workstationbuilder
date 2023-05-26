@@ -34,7 +34,7 @@ InstallChocoPackages $ChocoInstalls
 
 choco upgrade powershell-core --cacheLocation="$ChocoCachePath" --install-arguments='"ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL=1 ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1 REGISTER_MANIFEST=1 ENABLE_PSREMOTING=1"' --packageparameters '"/CleanUpPath"'
 choco upgrade sysinternals --params "/InstallDir:$UtilPath\sysinternals"
-choco upgrade nirlauncher --cacheLocation="$ChocoCachePath" --params="'/Sysinternals'"
+#choco upgrade nirlauncher --cacheLocation="$ChocoCachePath" --params="'/Sysinternals'"
 
 # Tools with installers placed in the bin folder.
 Add-EnvPath -Location 'User' -NewPath $UtilPath
