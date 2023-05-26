@@ -28,6 +28,7 @@ $ChocoInstalls = @(
     'adobereader'
     'winmerge'
     'ueli'
+    'fzf'
 )
 InstallChocoPackages $ChocoInstalls
 #'autohotkey.install' -- needs and update to 2.0
