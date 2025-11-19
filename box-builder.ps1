@@ -52,9 +52,8 @@ $ManualDownloadInstall = @{
 
 Disable-UAC
 
-### HACK Workaround choco / boxstarter path too long error
-## https://github.com/chocolatey/boxstarter/issues/241
-$ChocoCachePath = "$env:USERPROFILE\AppData\Local\Temp\chocolatey"
+#$ChocoCachePath = "$env:USERPROFILE\AppData\Local\Temp\chocolatey"
+$ChocoCachePath = "C:\ChocolateyCache"
 New-Item -Path $ChocoCachePath -ItemType Directory -Force
 
 ######################################
