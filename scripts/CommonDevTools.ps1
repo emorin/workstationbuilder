@@ -21,7 +21,6 @@ choco upgrade openssl.light --cacheLocation="$ChocoCachePath" --params "/Install
 
 $ChocoInstalls = @(
     'ngrok'
-    'docker-desktop'
     'github-desktop'
     'jetbrainstoolbox'
     'NimbleText'
@@ -36,6 +35,10 @@ $ChocoInstalls = @(
     'markdownmonster'
     'dotnetfx'
     'gitkraken'
+    'linqpad'
+    'another-redis-desktop-manager'
+    'bicep'
+    'WestwindWebSurge'
 )
 InstallChocoPackages $ChocoInstalls
 RefreshEnv
@@ -51,3 +54,17 @@ Update-SessionEnvironment #refreshing env due to Git install
 #choco upgrade visualstudio2022-workload-universal -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
 #choco upgrade visualstudio2022-workload-data -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
 #choco upgrade visualstudio2022-workload-office -y --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+
+# # Visual Studio 2026
+choco upgrade visualstudio2026professional -y --cacheLocation "$ChocoCachePath"
+choco upgrade visualstudio2026-workload-netweb -y --cacheLocation "$ChocoCachePath"
+choco upgrade visualstudio2026-workload-azure -y --cacheLocation "$ChocoCachePath"
+choco upgrade visualstudio2026-workload-azurebuildtools -y --cacheLocation "$ChocoCachePath"
+choco upgrade visualstudio2026-workload-python -y --cacheLocation "$ChocoCachePath"
+choco upgrade visualstudio2026-workload-node -y --cacheLocation "$ChocoCachePath"
+choco upgrade visualstudio2026-workload-manageddesktop -y --cacheLocation "$ChocoCachePath"
+choco upgrade visualstudio2026-workload-netcrossplat -y --cacheLocation "$ChocoCachePath"
+choco upgrade visualstudio2026-workload-universal -y --cacheLocation "$ChocoCachePath"
+choco upgrade visualstudio2026-workload-data -y --cacheLocation "$ChocoCachePath"
+choco upgrade visualstudio2026-workload-office -y --cacheLocation "$ChocoCachePath"
+choco upgrade visualstudio2026-workload-manageddesktopbuildtools -y --cacheLocation "$ChocoCachePath"

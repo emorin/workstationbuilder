@@ -1,9 +1,9 @@
-# #--- Create a folder for tools ---
-# Write-Host ""
-# Write-Output "Creating Tools folder on C:\" -ForegroundColor Green
-# Write-Host "------------------------------------" -ForegroundColor Green
-# New-Item -Path C:\tools -ItemType "directory"
-# New-Item -Path C:\tools -Name "TOOLS_THAT_DON'T_HAVE_INSTALLER.txt" -ItemType "file" -Value "This folder is for tools that are NOT installed via an installer. Tools that are installed via an installer should be placed in default programs location or in 'C:\bin\'"
+#--- Create a folder for tools ---
+Write-Host ""
+Write-Output "Creating Tools folder on C:\" -ForegroundColor Green
+Write-Host "------------------------------------" -ForegroundColor Green
+New-Item -Path C:\tools -ItemType "directory"
+New-Item -Path C:\tools -Name "TOOLS_THAT_DON'T_HAVE_INSTALLER.txt" -ItemType "file" -Value "This folder is for tools that are NOT installed via an installer. Tools that are installed via an installer should be placed in default programs location or in 'C:\bin\'"
 
 # Write-Host ""
 # Write-Host "Installing RSAT Tools" -ForegroundColor Green
@@ -26,7 +26,7 @@
 Write-Host ""
 Write-Output "Downloading and Installing XrmToolBox to the $UtilPath\XrmToolbox folder." -ForegroundColor Green
 Write-Host "------------------------------------" -ForegroundColor Green
-(New-Object System.Net.WebClient).DownloadFile("https://github.com/MscrmTools/XrmToolBox/releases/download/v1.2023.2.64/XrmToolbox.zip","$Env:TEMP\XrmToolbox.zip");(Expand-Archive "$Env:TEMP\XrmToolbox.zip" -DestinationPath "$UtilPath\XrmToolbox\" -Force);
+(New-Object System.Net.WebClient).DownloadFile("https://github.com/MscrmTools/XrmToolBox/releases/download/v1.2025.10.74/XrmToolbox.zip", "$Env:TEMP\XrmToolbox.zip"); (Expand-Archive "$Env:TEMP\XrmToolbox.zip" -DestinationPath "$UtilPath\XrmToolbox\" -Force);
 
 
 # # Write-Host ""

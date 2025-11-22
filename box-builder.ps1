@@ -24,7 +24,7 @@ Install-BoxstarterPackage -PackageName https://raw.githubusercontent.com/emorin/
 #>
 
 # Boxstarter options
-$Boxstarter.RebootOk=$true # Allow reboots?
+$Boxstarter.RebootOk = $true # Allow reboots?
 #$Boxstarter.NoPassword=$false # Is this a machine with no login password?
 #$Boxstarter.AutoLogin=$true # Save my password securely and auto-login after a reboot
 
@@ -35,12 +35,44 @@ $UtilDownloadPath = join-path $env:systemdrive 'Utilities\Downloads'
 # $UtilBinPath = join-path $env:systemdrive 'Utilities\bin'
 $UtilPath = join-path $env:systemdrive 'Utils'
 
+# ***** BEGIN CUSTOMIZATION *****
+# PowerShell Modules to install
+$ModulesToBeInstalled = @(
+    'Azure',
+    'AzureAD',
+    'AzureADPreview',
+    'AzureRM',
+    'Configuration',
+    'CredentialManager',
+    'dbatools',
+    'EZOut',
+    'HistoryPx',
+    'InvokeBuild',
+    'msonline',
+    'PackageManagement',
+    'Pansies',
+    'platyPS',
+    'posh-git',
+    'PowerLine',
+    'PowerShellGet',
+    'powershell-yaml',
+    'psake',
+    'PSCodeHealth',
+    'PSDecode',
+    'PSDepend',
+    'PSGit',
+    'PSGraph',
+    'psmsgraph',
+    'PSScriptAnalyzer',
+    'SharePointPnPPowerShellOnline',
+    'SnippetPx',
+    'WinSCP',
+    'OhMyPsh'
+)
 # some manual installs: vscode-insiders and typora
 $ManualDownloadInstall = @{
-    'vscodeinsiders.exe' = 'https://go.microsoft.com/fwlink/?Linkid=852155'
-   # 'vscode.exe' = 'https://go.microsoft.com/fwlink/?linkid=852157'
-    'typora-setup-x64.exe' = 'https://typora.io/windows/typora-setup-x64.exe'
-    'skypeonlinepowershell.exe' = 'https://download.microsoft.com/download/2/0/5/2050B39B-4DA5-48E0-B768-583533B42C3B/SkypeOnlinePowershell.exe'
+    # 'vscode.exe' = 'https://go.microsoft.com/fwlink/?linkid=852157'
+    'Liquid XML Studio.exe' = 'https://www.liquid-technologies.com/downloads/full'
 }
 
 # Chocolatey packages to install
@@ -77,51 +109,7 @@ function Check-Command($cmdname) {
 function executeScript {
     Param ([string]$script)
     write-host "executing $helperUri/$script ..."
-	iex ((new-object net.webclient).DownloadString("$helperUri/$script"))
-}
-
-function chocoAppInstall {
-    Param(  
-        [string]$chocolateyAppList
-    )
-
-    if ([string]::IsNullOrWhiteSpace($chocolateyAppList) -eq $false){   
-      
-        $appsToInstall = $chocolateyAppList -split "," | ForEach-Object { "$($_.Trim())" }
-
-        foreach ($app in $appsToInstall)
-        {
-            Write-Host ""
-            Write-Host "Installing $app" -ForegroundColor Green
-            Write-Host "------------------------------------" -ForegroundColor Green
-            & choco upgrade $app -y --cacheLocation="$ChocoCachePath" | Write-Output
-        }
-    }
-}
-
-function InstallChocoPackages_OLD {
-    param (
-        [array]$chocolateyAppList
-    ) 
-    <#
-        Install any chocolatey packages we want setup now
-    #>
-    Write-Output "Installing software via chocolatey"  
-    if ([string]::IsNullOrWhiteSpace($chocolateyAppList) -eq $false){   
-      
-        $appsToInstall = $chocolateyAppList -split "," | ForEach-Object { "$($_.Trim())" }
-
-        foreach ($app in $appsToInstall)
-        {
-            Write-Host ""
-            Write-Host "Installing $app" -ForegroundColor Green
-            Write-Host "------------------------------------" -ForegroundColor Green
-            & choco upgrade $app -y --cacheLocation="$ChocoCachePath" | Write-Output
-        }
-    }
-    else {
-        Write-Output 'There were no packages to install!'
-    }
+    iex ((new-object net.webclient).DownloadString("$helperUri/$script"))
 }
 
 function InstallChocoPackages {
@@ -136,10 +124,10 @@ function InstallChocoPackages {
         # Install a ton of other crap I use or like, update $ChocoInsalls to suit your needs of course
         $chocoPackages | Foreach-Object {
             try {
-	    	Write-Host ""
-            	Write-Host "Installing $_" -ForegroundColor Green
-            	Write-Host "------------------------------------" -ForegroundColor Green
-                choco upgrade -y $_ --cacheLocation "$($env:userprofile)\AppData\Local\Temp\chocolatey"
+                Write-Host ""
+                Write-Host "Installing $_" -ForegroundColor Green
+                Write-Host "------------------------------------" -ForegroundColor Green
+                choco upgrade -y $_ --cacheLocation "$ChocoCachePath"
             }
             catch {
                 Write-Warning "Unable to install software package with Chocolatey: $($_)"
@@ -156,20 +144,17 @@ function chocoWindowsFeature {
         [string]$dismAppList    
     )
 
-    if ([string]::IsNullOrWhiteSpace($dismAppList) -eq $false){
+    if ([string]::IsNullOrWhiteSpace($dismAppList) -eq $false) {
         Write-Host "DISM Features Specified"    
 
         $appsToInstall = $dismAppList -split "," | ForEach-Object { "$($_.Trim())" }
 
-        foreach ($app in $appsToInstall)
-        {
+        foreach ($app in $appsToInstall) {
             Write-Host "Installing $app"
             & choco install $app /y /source windowsfeatures | Write-Output
         }
     }
 }
-
-
 
 function Read-Choice {     
     Param(
@@ -196,7 +181,7 @@ Function Get-SpecialPaths {
 
     $names = [Environment+SpecialFolder]::GetNames([Environment+SpecialFolder])
 
-    foreach($name in $names) {
+    foreach ($name in $names) {
         $SpecialFolders[$name] = [Environment]::GetFolderPath($name)
     }
 
@@ -231,7 +216,7 @@ Function Add-EnvPath {
     if ($AllPaths -notcontains $NewPath) {
         Write-Output "Adding Utilties bin directory path to the environmental path list: $UtilPath"
 
-        $NewPaths = (@(([Environment]::GetEnvironmentVariables($Location).GetEnumerator() | Where {$_.Name -eq 'Path'}).Value -split ';') + $UtilPath | Select-Object -Unique) -join ';'
+        $NewPaths = (@(([Environment]::GetEnvironmentVariables($Location).GetEnumerator() | Where { $_.Name -eq 'Path' }).Value -split ';') + $UtilPath | Select-Object -Unique) -join ';'
 
         [Environment]::SetEnvironmentVariable("PATH", $NewPaths, $Location)
     }
@@ -239,9 +224,9 @@ Function Add-EnvPath {
 
 function Start-Proc {
     param([string]$Exe = $(Throw "An executable must be specified"),
-          [string]$Arguments,
-          [switch]$Hidden,
-          [switch]$waitforexit)
+        [string]$Arguments,
+        [switch]$Hidden,
+        [switch]$waitforexit)
 
     $startinfo = New-Object System.Diagnostics.ProcessStartInfo
     $startinfo.FileName = $Exe
@@ -257,7 +242,7 @@ function Start-Proc {
 $ConfirmPreference = "None" #ensure installing powershell modules don't prompt on needed dependencies
 
 # Need this to download via Invoke-WebRequest
-[Net.ServicePointManager]::SecurityProtocol =  [System.Security.Authentication.SslProtocols] "tls, tls11, tls12"
+[Net.ServicePointManager]::SecurityProtocol = [System.Security.Authentication.SslProtocols] "tls, tls11, tls12"
 
 # Trust the psgallery for installs
 Write-Host -ForegroundColor 'Yellow' 'Setting PSGallery as a trusted installation source...'
@@ -278,7 +263,7 @@ $null = Install-PackageProvider NuGet -Force
 # $SpecialPaths = Get-SpecialPaths
 $packages = Get-Package
 
-if (@($packages | Where-Object {$_.Name -eq 'PackageManagement'}).Count -eq 0) {
+if (@($packages | Where-Object { $_.Name -eq 'PackageManagement' }).Count -eq 0) {
     Write-Host -ForegroundColor cyan "PackageManager is installed but not being maintained via the PowerShell gallery (so it will never get updated). Forcing the install of this module through the gallery to rectify this now."
     Install-Module PackageManagement -Force
     Install-Module PowerShellGet -Force
@@ -289,7 +274,7 @@ if (@($packages | Where-Object {$_.Name -eq 'PackageManagement'}).Count -eq 0) {
 }
 else {
     $InstalledModules = (Get-InstalledModule).name
-    $ModulesToBeInstalled = $ModulesToBeInstalled | Where-Object {$InstalledModules -notcontains $_}
+    $ModulesToBeInstalled = $ModulesToBeInstalled | Where-Object { $InstalledModules -notcontains $_ }
     if ($ModulesToBeInstalled.Count -gt 0) {
         Write-Host -ForegroundColor:cyan "Installing modules that are not already installed via powershellget. Modules to be installed = $($ModulesToBeInstalled.Count)"
         Install-Module -Name $ModulesToBeInstalled -AllowClobber -AcceptLicense -ErrorAction:SilentlyContinue
@@ -314,6 +299,41 @@ executeScript "Docker.ps1";
 executeScript "Azure.ps1";
 executeScript "SQL.ps1";
 executeScript "OtherTools.ps1";
+executeScript "AI.ps1";
+
+# Manually downloaded software
+Foreach ($software in $ManualDownloadInstall.keys) {
+    Write-Output "Downloading $software"
+    if ( -not (Test-Path $software) ) {
+        try {
+            Invoke-WebRequest $ManualDownloadInstall[$software] -OutFile $software -UseBasicParsing
+            $FilesDownloaded += $software
+        }
+        catch {}
+    }
+    else {
+        Write-Warning "File is already downloaded, skipping: $software"
+    }
+}
+
+# Extracting self-contained binaries (zip files) to our bin folder
+Write-Output 'Extracting self-contained binaries (zip files) to our bin folder'
+Get-ChildItem -Path $UtilDownloadPath -File -Filter '*.zip' | Where { $FilesDownloaded -contains $_.Name } | ForEach-Object {
+    Expand-Archive -Path $_.FullName -DestinationPath $UtilBinPath -Force
+}
+
+Add-EnvPath -Location 'User' -NewPath $UtilBinPath
+Update-SessionEnvironment
+
+# Kick off exe installs
+Get-ChildItem -Path $UtilDownloadPath -File -Filter '*.exe' | Where { $FilesDownloaded -contains $_.Name } | ForEach-Object {
+    Start-Proc -Exe $_.FullName -waitforexit
+}
+
+# Kick off msi installs
+Get-ChildItem -Path $UtilDownloadPath -File -Filter '*.msi' | Where { $FilesDownloaded -contains $_.Name } | ForEach-Object {
+    Start-Proc -Exe $_.FullName -waitforexit
+}
 
 # # Windows features
 # choco install IIS-WebServerRole IIS-NetFxExtensibility45 IIS-HttpCompressionDynamic IIS-WindowsAuthentication IIS-ASPNET45 IIS-IIS6ManagementCompatibility -source windowsfeatures
@@ -324,15 +344,11 @@ executeScript "OtherTools.ps1";
 #     cup dellcommandupdate-uwp --cacheLocation="$ChocoCachePath"
 # }
 
-# cup hwinfo --cacheLocation="$ChocoCachePath"
-
 # cup msbuild-structured-log-viewer --cacheLocation="$ChocoCachePath"
 
 # cup PDFXchangeEditor --cacheLocation="$ChocoCachePath" --params '"/NoDesktopShortcuts /NoUpdater"'
 # cup pingplotter --cacheLocation="$ChocoCachePath"
 # cup windirstat --cacheLocation="$ChocoCachePath"
-
-# # $docker = "C:\Program Files\Docker\Docker\Resources\bin\docker.exe"
 
 # # Install-Module posh-git -AllowPrerelease -Force
 
